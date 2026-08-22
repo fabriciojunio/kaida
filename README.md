@@ -18,7 +18,7 @@ restou da própria memória.
 ### Opção 1 - baixar o jogo pronto (recomendado)
 
 Baixe o arquivo `Kaida-Windows.zip` na página de
-[**Releases**](https://github.com/fabriciojunio/kaida-raizes-do-esquecimento/releases/latest),
+[**Releases**](https://github.com/fabriciojunio/kaida/releases/latest),
 extraia a pasta e execute **`Kaida.exe`**.
 
 Não é preciso instalar mais nada. O jogo é para **Windows 64 bits**.

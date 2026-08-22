@@ -48,4 +48,4 @@ Thumbs.db
 /[Aa]ssets/InitTestScene*
 
 # Pacote de distribuicao (vai para o Releases, nao para o repo)
-Kaida-Windows.zip
+/Kaida-Windows.zip
