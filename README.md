@@ -79,6 +79,9 @@ Orla da Vila → Floresta Silente → Lago Silente → Caverna Musgosa → Santu
 - **Chefe final** com barra de vida única, alternando feixes e investidas
 - **Três dificuldades**, escolhidas ao começar a partida, que mudam vida,
   invulnerabilidade e o comportamento dos inimigos
+- **Laje solta** na Orla da Vila: fica parada no ar até alguém pisar nela,
+  desliza cinco segundos levando junto quem estiver em cima e depois trava e
+  cai. Pisar de novo enquanto ela desce não adianta nada
 - **Colecionáveis**: fragmentos de lore e nódulos que aumentam a vida máxima
 - **Três tentativas por partida**: esgotadas, o jogo recomeça do início
 - **Save automático** nos marcos de descanso
@@ -124,11 +127,11 @@ docs/             GDD e divisão de tarefas
 
 ## Testes
 
-138 casos automatizados, todos passando.
+157 casos automatizados, todos passando.
 
 ```
-EditMode   75/75      lógica e integridade do projeto
-PlayMode   63/63      comportamento com a física rodando
+EditMode   78/78      lógica e integridade do projeto
+PlayMode   79/79      comportamento com a física rodando
 ```
 
 Para rodar:

@@ -386,6 +386,47 @@ public static class PrefabBuilder
         noCol.offset = new Vector2(0f, 1f);
         no.AddComponent<HealthNode>();
         Salvar(no, $"{PastaPrefabs}/NoduloDeVida.prefab");
+
+        CriarLajeSolta();
+    }
+
+    /// <summary>
+    /// A laje que se solta ao ser pisada: anda um tempo e cai.
+    ///
+    /// Vai na layer Ground porque é chão de verdade - é o que o GroundCheck da
+    /// Kaida procura. Numa layer própria ela até segura o corpo, mas o jogo
+    /// entende que ninguém está pisando em nada: a Kaida fica em queda em cima
+    /// da laje e não consegue pular de lá.
+    /// </summary>
+    static void CriarLajeSolta()
+    {
+        var go = new GameObject("PlataformaSolta");
+        go.layer = LayerGround;
+
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = RecorteDeSprites.Carregar(RecorteDeSprites.Laje);
+        sr.sortingOrder = 1;                       // à frente do chão do fundo
+
+        var rb = go.AddComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Kinematic;   // parada no ar até ser pisada
+        rb.gravityScale = 0f;
+        rb.freezeRotation = true;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        // O sprite tem o pivô no topo, então o corpo da laje fica abaixo da
+        // posição do objeto e a superfície coincide com ela.
+        var col = go.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(3f, 1f);
+        col.offset = new Vector2(0f, -0.5f);
+        col.sharedMaterial = MaterialSemAtrito();
+
+        var laje = go.AddComponent<PlataformaSolta>();
+        laje.direcao = 1;
+        laje.velocidade = 2f;
+        laje.duracao = 5f;
+        laje.gravidadeDaQueda = 2.5f;
+
+        Salvar(go, $"{PastaPrefabs}/PlataformaSolta.prefab");
     }
 
     // ------------------------------------------------------------- utilidades

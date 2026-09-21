@@ -39,6 +39,9 @@ public static class RecorteDeSprites
     public const string Casa  = Pasta + "/Casa.asset";
     public const string Porta = Pasta + "/Porta.asset";
 
+    // pedaço de chão que se solta e anda (ver PlataformaSolta)
+    public const string Laje = Pasta + "/Laje.asset";
+
     /// <summary>Uma janela numa folha, medida de cima para baixo como na imagem.</summary>
     struct Peca
     {
@@ -87,6 +90,14 @@ public static class RecorteDeSprites
             // --- construções da Orla da Vila ---
             new Peca("Casa",  Casa,  Env + "Buildings.png", 238,  12, 76, 86),
             new Peca("Porta", Porta, Env + "Buildings.png", 341, 122, 38, 54),
+
+            // --- a laje que se solta ---
+            // Três células do mesmo bloco de terra que vira tile de chão, para
+            // ela parecer um pedaço do cenário que cedeu, e não um objeto de
+            // outro jogo. O pivô fica no topo: assim a laje colocada na posição
+            // do mapa encosta a superfície exatamente na altura em que se pisa,
+            // que é como os outros objetos são posicionados.
+            new Peca("Laje", Laje, Env + "Tiles.png", 16, 16, 48, 16, new Vector2(0.5f, 1f)),
         };
 
         int feitos = 0;

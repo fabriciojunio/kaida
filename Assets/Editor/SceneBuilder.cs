@@ -18,6 +18,7 @@ using UnityEngine.Tilemaps;
 ///   C  marco de descanso    X  perigo (espinhos / esporos)
 ///   B  javali-casca         A  abelha-eco        S  caracol-rastejante
 ///   H  habilidade           F  fragmento de lúmen  N  nódulo de vida
+///   L  laje solta (fica parada até ser pisada, anda e cai)
 ///   <  volta para a região anterior   >  segue para a próxima
 ///   G  o Guardião do Lúmen
 /// </summary>
@@ -41,7 +42,7 @@ public static class SceneBuilder
         ".....................N..........................................",
         "..................=======.......................................",
         "................................................................",
-        "................................................................",
+        "........................................L.......................",
         "..............=======.........=======...........................",
         "................................................................",
         ".............F..................................................",
@@ -1053,6 +1054,7 @@ public static class SceneBuilder
                     case 'F': CriarFragmento(r, conteudo, pos); break;
                     case 'N': CriarNodulo(r, conteudo, pos); break;
                     case 'X': CriarPerigo(conteudo, pos); break;
+                    case 'L': CriarLajeSolta(conteudo, pos); break;
 
                     case '>': CriarTransicao(conteudo, pos, r.proxima, "voltando"); break;
                     case '<': CriarTransicao(conteudo, pos, r.anterior, "chegando"); break;
@@ -1131,6 +1133,27 @@ public static class SceneBuilder
         var go = Instanciar("Assets/Prefabs/NoduloDeVida.prefab", pai, pos);
         if (go == null) return;
         go.GetComponent<HealthNode>().nodeId = $"node_{r.arquivo}_{contadorNodulo++}";
+    }
+
+    /// <summary>
+    /// Laje que se solta ao ser pisada, anda cinco segundos e cai.
+    ///
+    /// A posição do mapa é a superfície onde se pisa: o prefab tem o pivô no
+    /// topo, como os outros objetos que ficam apoiados em algo.
+    ///
+    /// A direção e a velocidade vêm daqui, e não do prefab, porque dependem do
+    /// desenho da região: esta anda para a direita e termina o percurso em cima
+    /// da plataforma de baixo, então quem sobe nela não fica sem saída.
+    /// </summary>
+    static void CriarLajeSolta(GameObject pai, Vector2 pos)
+    {
+        var go = Instanciar("Assets/Prefabs/PlataformaSolta.prefab", pai, pos);
+        if (go == null) return;
+
+        var laje = go.GetComponent<PlataformaSolta>();
+        laje.direcao = 1;
+        laje.velocidade = 2f;
+        laje.duracao = 5f;
     }
 
     static void CriarPerigo(GameObject pai, Vector2 pos)

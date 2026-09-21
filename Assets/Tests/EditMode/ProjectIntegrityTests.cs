@@ -498,11 +498,56 @@ public class ProjectIntegrityTests
             $"em {caminho} a Kaida nasce sobre o vazio e cai assim que o jogo começa");
     }
 
+    [Test]
+    public void LajeSolta_NasceParadaESemPeso()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/PlataformaSolta.prefab");
+        Assert.IsNotNull(prefab, "a laje não foi gerada");
+
+        var rb = prefab.GetComponent<Rigidbody2D>();
+        Assert.IsNotNull(rb, "laje sem Rigidbody2D");
+        Assert.AreEqual(RigidbodyType2D.Kinematic, rb.bodyType,
+            "dinâmica, ela é empurrada por quem encosta e sai do lugar antes da hora");
+        Assert.AreEqual(0f, rb.gravityScale, "nasceria caindo");
+
+        var col = prefab.GetComponent<BoxCollider2D>();
+        Assert.IsNotNull(col, "laje sem colisor");
+        Assert.IsFalse(col.isTrigger, "gatilho não segura ninguém: não daria para pisar nela");
+
+        Assert.AreEqual(PrefabBuilder.LayerGround, prefab.layer,
+            "fora da layer Ground o GroundCheck não a enxerga e a Kaida não pula de cima dela");
+    }
+
+    [Test]
+    public void LajeDaOrla_AndaECaiDentroDaRegiao()
+    {
+        var cena = EditorSceneManager.OpenScene(Cenas[0], OpenSceneMode.Single);
+        var lajes = cena.GetRootGameObjects()
+                        .SelectMany(r => r.GetComponentsInChildren<PlataformaSolta>())
+                        .ToList();
+
+        Assert.IsNotEmpty(lajes, "a Orla da Vila deveria ter a laje solta");
+
+        foreach (var laje in lajes)
+        {
+            Assert.Greater(laje.duracao, 0f, "laje que anda por tempo nenhum não sai do lugar");
+            Assert.Greater(laje.velocidade, 0f, "laje parada mesmo depois de pisada");
+
+            // Percurso inteiro dentro do mapa: uma laje que termina fora da
+            // região leva junto quem estiver em cima dela.
+            float fim = laje.transform.position.x
+                        + (laje.direcao < 0 ? -1f : 1f) * laje.velocidade * laje.duracao;
+            Assert.GreaterOrEqual(fim, 0f, "o percurso sai pela esquerda do mapa");
+            Assert.LessOrEqual(fim, 64f, "o percurso sai pela direita do mapa");
+        }
+    }
+
     [TestCase("Assets/Prefabs/Checkpoint.prefab", 4f)]
     [TestCase("Assets/Prefabs/PickupHabilidade.prefab", 3f)]
     [TestCase("Assets/Prefabs/FragmentoDeLumen.prefab", 3f)]
     [TestCase("Assets/Prefabs/NoduloDeVida.prefab", 3f)]
     [TestCase("Assets/Prefabs/LumenBeam.prefab", 2f)]
+    [TestCase("Assets/Prefabs/PlataformaSolta.prefab", 2f)]
     public void ObjetosDeMundo_TemSpriteRecortado_NaoAFolhaInteira(string caminho, float alturaMaxima)
     {
         // Uma folha de props inteira mede mais de 18 unidades. Usada como
