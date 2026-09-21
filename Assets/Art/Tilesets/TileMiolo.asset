@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!213 &-3042809513325245567
+--- !u!213 &-8401765690119695054
 Sprite:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: TileMiolo
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: -3042809513325245567}
+  m_Sprite: {fileID: -8401765690119695054}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
