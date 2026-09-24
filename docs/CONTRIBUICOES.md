@@ -67,7 +67,7 @@ seis cenas a partir de mapas em texto.
 
 **Arquivos:** `Assets/Tests/`
 
-138 casos automatizados em EditMode e PlayMode, incluindo o validador de
+157 casos automatizados em EditMode e PlayMode, incluindo o validador de
 alcance dos mapas e os testes de colisão do chão nas cenas reais.
 
 **Responsável:** Fabrício Júnio Almeida Dias

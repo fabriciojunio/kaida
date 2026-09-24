@@ -283,14 +283,27 @@ As plataformas são atravessáveis por baixo (`PlatformEffector2D`): sobe-se
 através delas e pousa-se em cima. Como blocos sólidos, qualquer plataforma
 no meio do caminho viraria teto.
 
+A Orla da Vila tem uma **laje solta**, que é a exceção. Ela fica parada no ar
+até alguém pisar; a partir do contato desliza cinco segundos em linha reta,
+levando junto quem está em cima, e no fim do tempo trava e cai pela gravidade
+até pousar na plataforma de baixo. Pisar de novo durante a queda não reinicia
+nada. O corpo dela nasce cinemático e só vira dinâmico quando o tempo acaba:
+dinâmico desde o começo, ela sairia do lugar com um esbarrão.
+
 ### 13.6 Dificuldade
 
 | | Fácil | Normal | Difícil |
 |---|---|---|---|
-| Vida máxima | 7 | 5 | 3 |
-| Invulnerabilidade | 1,5 s | 1,0 s | 0,65 s |
-| Velocidade dos inimigos | 85% | 100% | 125% |
-| Alcance de visão deles | 80% | 100% | 130% |
+| Vida máxima | 9 | 7 | 4 |
+| Invulnerabilidade | 1,9 s | 1,35 s | 0,85 s |
+| Velocidade dos inimigos | 75% | 88% | 120% |
+| Alcance de visão deles | 70% | 85% | 130% |
+| Vida do Guardião | 65% | 80% | 100% |
+
+Os números são os do rebalanceamento: jogando, o Normal cobrava como
+dificuldade alta. O que mais subiu foi a janela de recuperação, que é o que
+dá tempo de sair de perto depois de levar um golpe. A vida do chefe escalar
+por dificuldade também é dali: antes a luta final era idêntica nas três.
 
 A escolha aparece ao clicar em *Novo jogo*, e não num submenu à parte: a
 dificuldade vale para a partida inteira, então é uma pergunta que o jogo
