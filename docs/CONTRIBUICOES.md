@@ -1,17 +1,22 @@
 # Divisão de tarefas
 
-> **Antes de entregar:** confiram e ajustem esta tabela para refletir o que
-> cada um fez de fato. O professor avalia a distribuição de tarefas e pede
-> que cada integrante apresente suas contribuições na defesa oral.
-
 **Equipe:** Camila Pereira Raimundo · Fabrício Júnio Almeida Dias ·
 Kauã Limão Nunes · Luan Miranda Padilha
 
-## Áreas do projeto
+O projeto foi dividido em frentes, e cada uma corresponde a pastas e arquivos
+identificáveis no repositório. É assim que dá para mostrar o código na
+apresentação sem ficar caçando arquivo.
 
-O projeto está dividido nas frentes abaixo. Cada uma corresponde a pastas e
-arquivos identificáveis no repositório, o que facilita mostrar o código na
-apresentação.
+## Quem fez o quê
+
+| Integrante | Frentes | Onde está no repositório |
+|---|---|---|
+| Camila Pereira Raimundo | Personagem e controles; level design e geração de cenas | `Assets/Scripts/Player/`, `Assets/Editor/` |
+| Fabrício Júnio Almeida Dias | Inimigos e chefe; laje solta; testes e qualidade | `Assets/Scripts/Enemies/`, `Assets/Scripts/World/PlataformaSolta.cs`, `Assets/Tests/` |
+| Kauã Limão Nunes | Mundo, progressão e salvamento | `Assets/Scripts/World/`, `Assets/Scripts/Systems/` |
+| Luan Miranda Padilha | Interface e áudio; documentação e entrega | `Assets/Scripts/UI/`, `TrilhaSonora.cs`, `docs/` |
+
+## Áreas do projeto
 
 ### 1. Personagem e controles
 
@@ -72,6 +77,27 @@ alcance dos mapas e os testes de colisão do chão nas cenas reais.
 
 **Responsável:** Fabrício Júnio Almeida Dias
 
+### 7. Laje solta da Orla da Vila
+
+**Arquivos:** `Assets/Scripts/World/PlataformaSolta.cs`,
+`Assets/Tests/PlayMode/PlataformaSoltaTests.cs`
+
+Plataforma que fica parada no ar até ser pisada, desliza cinco segundos
+levando junto quem está em cima e então trava e cai pela gravidade. Nasceu
+do trabalho individual da aula 8 e ficou no jogo. Fica listada à parte por
+isso, e não junto do resto do mundo.
+
+**Responsável:** Fabrício Júnio Almeida Dias
+
+### 8. Documentação e entrega
+
+**Arquivos:** `README.md`, `CREDITOS.md`, `docs/`
+
+Game Design Document, instruções de execução, créditos de arte conferidos
+contra a licença de cada pacote e o empacotamento das releases.
+
+**Responsável:** Luan Miranda Padilha
+
 ## Sugestão de fala na apresentação
 
 O professor reserva 15 minutos por grupo, cobrindo o jogo, o código-fonte e
@@ -103,6 +129,10 @@ as contribuições de cada integrante. Uma divisão que cabe no tempo:
    chão pegou um defeito que deixava a personagem atravessar o cenário sem
    que nada aparecesse na tela.
 
+5. **A laje solta** - um corpo que começa cinemático e vira dinâmico na hora
+   certa. Dá para explicar em trinta segundos por que os dois tipos de corpo
+   existem, usando um objeto que está ali na tela.
+
 ### Dificuldades que valem ser contadas
 
 Vale mencionar os problemas enfrentados, porque mostram processo:
@@ -118,3 +148,6 @@ Vale mencionar os problemas enfrentados, porque mostram processo:
   presos a ela continuavam à direita, então virada para a esquerda o golpe
   saía pelas costas. Nenhum teste pegou porque todos punham o inimigo à
   direita.
+- A laje não levava a personagem junto. O controlador reescreve a velocidade
+  dela a cada passo de física, então o atrito não empurra ninguém: quem
+  carrega precisa ser a própria laje.
