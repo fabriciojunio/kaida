@@ -90,6 +90,8 @@ Orla da Vila → Floresta Silente → Lago Silente → Caverna Musgosa → Santu
 
 - [`docs/GDD.md`](docs/GDD.md) - Game Design Document
 - [`docs/CONTRIBUICOES.md`](docs/CONTRIBUICOES.md) - divisão de tarefas
+- [`docs/Apresentacao-Kaida.pptx`](docs/Apresentacao-Kaida.pptx) - slides da
+  apresentação, com nota de apresentador em cada um
 - [`CREDITOS.md`](CREDITOS.md) - origem e licença dos assets
 
 Os créditos também aparecem **dentro do jogo**, pelo menu principal.
