@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7556be4c9dbd7f94b80bc359a952dd2a, type: 3}
   m_Name: Laje
   m_EditorClassIdentifier: 
-  sprite: {fileID: 527326831509658900}
---- !u!213 &527326831509658900
+  sprite: {fileID: 2726450437686363225}
+--- !u!213 &2726450437686363225
 Sprite:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
