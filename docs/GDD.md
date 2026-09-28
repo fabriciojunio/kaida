@@ -92,7 +92,8 @@ O jogo assume a resolução nativa do monitor e funciona de 4:3 a ultrawide
 
 **Kaida** - espadachim sem memória. Move-se com agilidade: corre, dá dash,
 pula com altura variável e, conforme avança, ganha o pulo duplo. Começa com
-5 pontos de vida no modo Normal.
+7 pontos de vida no modo Normal, e cada Nódulo de Vida encontrado soma mais
+um, de forma permanente.
 
 ### 5.2 Inimigos
 
@@ -177,8 +178,8 @@ teste automatizado que garante isso a cada alteração de mapa.
 
 | Item | Efeito | Onde |
 |---|---|---|
-| **Fragmento de Lúmen** | Narrativo, não afeta jogabilidade | Fora da rota principal, um por região |
-| **Nódulo de Vida** | +1 de vida máxima, permanente | Escondido em plataformas altas |
+| **Fragmento de Lúmen** | Narrativo, não afeta jogabilidade | Fora da rota principal, um em cada região menos o Santuário |
+| **Nódulo de Vida** | +1 de vida máxima, permanente | Quatro no vale, escondidos em plataformas altas |
 | **Marco de descanso** | Salva o progresso e define o ponto de retorno | Início e meio de cada região |
 
 ## 10. Vitória e derrota
@@ -254,9 +255,8 @@ baixo de propósito - é som ambiente - e ajustável no menu.
 ### 13.2 Arquitetura do jogador
 
 O comportamento é uma **máquina de estados**, com um arquivo por estado:
-`idle`, `run`, `jump`, `fall`, `dash`, `attack`, `hurt`, `dead` e
-`wallcling`. Mecânica nova vira estado novo, nunca um `if` dentro de um
-estado existente.
+`idle`, `run`, `jump`, `fall`, `dash`, `attack`, `hurt` e `dead`. Mecânica
+nova vira estado novo, nunca um `if` dentro de um estado existente.
 
 Os valores de balanceamento ficam num ScriptableObject (`PlayerStats`), e
 nunca no meio da lógica.
@@ -268,8 +268,9 @@ frente da personagem - assim o mesmo golpe serve para inimigo comum e para
 o chefe, sem o jogador precisar conhecer cada tipo.
 
 Ao apanhar, Kaida recebe empurrão na direção contrária e uma janela de
-invulnerabilidade de 1 segundo, com o sprite piscando para o estado ficar
-legível.
+invulnerabilidade, com o sprite piscando para o estado ficar legível. A
+duração dessa janela muda com a dificuldade: 1,35 s no Normal, e é o valor
+que mais pesa na sensação de justiça do combate (ver 13.6).
 
 ### 13.4 Câmera
 

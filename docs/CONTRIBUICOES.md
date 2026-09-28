@@ -22,7 +22,7 @@ apresentação sem ficar caçando arquivo.
 
 **Arquivos:** `Assets/Scripts/Player/`
 
-Máquina de estados do jogador (9 estados, um arquivo cada), física de
+Máquina de estados do jogador (8 estados, um arquivo cada), física de
 movimento com gravidade assimétrica, pulo de altura variável, dash com
 invulnerabilidade, coyote time e jump buffer. Configuração de balanceamento
 em `PlayerStats`.
