@@ -16,7 +16,7 @@ public class PlayerFallState : State
 
     public override void LogicUpdate()
     {
-        bool jumpPressed = Input.GetButtonDown("Jump");
+        bool jumpPressed = Controles.PularApertou;
         if (jumpPressed) p.BufferJump();
 
         if (p.IsGrounded())
@@ -32,7 +32,7 @@ public class PlayerFallState : State
             if (p.CanCoyoteJump()) { p.ConsumeJumpBuffer(); machine.ChangeState("jump"); return; }
             if (p.CanAirJump()) { p.ConsumeJumpBuffer(); p.ConsumeAirJump(); machine.ChangeState("jump"); return; }
         }
-        if (Input.GetKeyDown(KeyCode.LeftShift) && p.canDash && p.airDashesLeft > 0) { machine.ChangeState("dash"); return; }
-        if (Input.GetButtonDown("Fire1")) { machine.ChangeState("attack"); return; }
+        if (Controles.ImpulsoApertou && p.CanDashInput && p.airDashesLeft > 0) { machine.ChangeState("dash"); return; }
+        if (Controles.AtacarApertou) { machine.ChangeState("attack"); return; }
     }
 }

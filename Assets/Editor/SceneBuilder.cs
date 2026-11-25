@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -20,7 +21,11 @@ using UnityEngine.Tilemaps;
 ///   H  habilidade           F  fragmento de lúmen  N  nódulo de vida
 ///   L  laje solta (fica parada até ser pisada, anda e cai)
 ///   <  volta para a região anterior   >  segue para a próxima
-///   G  o Guardião do Lúmen
+///   G  o Guardião do Lúmen         o  moeda
+///
+/// Cada região esconde uma habilidade (H), na ordem da apresentação:
+///   Orla: Impulso (dash) · Floresta: Pulo Duplo · Lago: Impulso Aéreo
+///   Caverna: Salto do Musgo (terceiro pulo) · Santuário: Lâmina de Lúmen
 /// </summary>
 public static class SceneBuilder
 {
@@ -32,99 +37,99 @@ public static class SceneBuilder
     // Nenhum salto obrigatório aqui passa disso.
 
     static readonly string[] OrlaDaVila = {
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        ".....................N..........................................",
-        "..................=======.......................................",
-        "................................................................",
-        "........................................L.......................",
-        "..............=======.........=======...........................",
-        "................................................................",
-        ".............F..................................................",
-        "..........=======.........=======...........=======.............",
-        "................................................................",
-        "..............P....C..................B.............B........>..",
-        "################################################################",
-        "################################################################",
-        "################################################################",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "..................oooNooo..............................................ooooo....................",
+        "..................=======..............................................=====....................",
+        "................................................................................................",
+        "..............ooooooo...................L........................ooooooo.............ooooo......",
+        "..............=======.........=======............................=======.............=====......",
+        "................................................................................................",
+        "..........oooFooo.........................................ooooooo...............................",
+        "..........=======.........=======...........=======.......=======..............=======..........",
+        "................................................................................................",
+        "..............P....C......H.....ooooo.B.............B.................B.........C...oooooo...>..",
+        "################################################################################################",
+        "################################################################################################",
+        "################################################################################################",
     };
 
     static readonly string[] FlorestaSilente = {
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "...................................H............................",
-        "................................=======.........................",
-        "................................................................",
-        "................................................................",
-        "............................=======.............................",
-        "................................................................",
-        "...........................S....................................",
-        "........................=======.............=======.............",
-        "................................................................",
-        ".......................F........................................",
-        "....................=======.............=======.................",
-        "................................................................",
-        ".<............p...C...............B.................B...C....>..",
-        "################################################################",
-        "################################################################",
-        "################################################################",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................oooHooo.........................................................",
+        "................................=======.........................................................",
+        "................................................................................................",
+        "............................ooooooo...............................ooooo.........................",
+        "............................=======...............................=====.........................",
+        "................................................................................A...............",
+        "........................oooSooo.........................................ooooooo.................",
+        "........................=======.............=======.....................=======.................",
+        "................................................................................................",
+        "....................oooFooo.......................................ooooooo.........ooooooo.......",
+        "....................=======.............=======...................=======.........=======.......",
+        "................................................................................................",
+        ".<............p...C...............B.....ooooo.......B...C.................B...........S......>..",
+        "################################################################################################",
+        "################################################################################################",
+        "################################################################################################",
     };
 
     // Lago Silente: a travessia é por cima da água, saltando entre
     // plataformas. Cair não mata - só devolve o caminho já andado.
     static readonly string[] LagoSilente = {
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        ".....................................A..........................",
-        "..................................=======.......................",
-        "................................................................",
-        ".................................................N..............",
-        "..........................=======.............=======...........",
-        "................................................................",
-        "........................F.......................................",
-        "......................=====...=====...=====.....................",
-        "................................................................",
-        ".<............p..C................................C.....B....>..",
-        "####################~~~~~~~~~~~~~~~~~~~~~~~~~~##################",
-        "####################::::::::::::::::::::::::::##################",
-        "################################################################",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "..................................oooAooo.....................................oooHooo...........",
+        "..................................=======.....................................=======...........",
+        "................................................................................................",
+        "..........................ooooooo................N..................................ooAoooo.....",
+        "..........................=======.............=======...............................=======.....",
+        "................................................................................................",
+        "......................ooFoo....ooooo...ooooo........................oooo......ooooooo...........",
+        "......................=====...=====...=====.........................====......=======...........",
+        "................................................................................................",
+        ".<............p..C................................C.....B...............................B....>..",
+        "####################~~~~~~~~~~~~~~~~~~~~~~~~~~####################~~~~~~~~~#####################",
+        "####################::::::::::::::::::::::::::####################:::::::::#####################",
+        "################################################################################################",
     };
 
     // Caverna Musgosa: a descida mais fechada do vale, com escadas de
     // plataformas dos dois lados e a passagem para o Santuário no fim do chão.
     static readonly string[] CavernaMusgosa = {
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "................................................................",
-        "...........................N....................................",
-        "........................=======.................................",
-        "................................................................",
-        ".......................F........................................",
-        "....................=======...........=======...................",
-        "................................................................",
-        ".....................................A..........................",
-        "................=======...........=======.......................",
-        "................................................................",
-        ".................................S..............................",
-        "............=======...........=======...........=======.........",
-        "................................................................",
-        ".<............p...C.....................S.....A....C.........>..",
-        "################################################################",
-        "################################################################",
-        "################################################################",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "................................................................................................",
+        "........................oooNooo.........................................oooHooo.................",
+        "........................=======.........................................=======.................",
+        "................................................................................................",
+        "....................oooF..........................................ooooooo.......................",
+        "....................=======...........=======.....................=======.......................",
+        "................................................................................................",
+        "................ooooooo..............A..................................ooooooo.A...............",
+        "................=======...........=======...............................=======.................",
+        "................................................................................................",
+        "............ooooooo..............S..............ooooooo...........ooooooo.......................",
+        "............=======...........=======...........=======...........=======.......................",
+        "................................................................................................",
+        ".<............p...C.....................S.....A....C..................S...........B.....C....>..",
+        "################################################################################################",
+        "################################################################################################",
+        "################################################################################################",
     };
 
     // Arena do chefe. As plataformas são escadas dos dois lados, e o Guardião
@@ -144,10 +149,10 @@ public static class SceneBuilder
         "................................G...............................",
         "............................=========...........................",
         "................................................................",
-        "............................................A...................",
+        "....................ooooooo............oooooA...................",
         "....................=======...........=======...................",
         "................................................................",
-        "......................S.........................................",
+        "..........ooH.ooo.....S..........................ooooooo........",
         "..........=======...............................=======.........",
         "................................................................",
         ".<............p...............C...............B.................",
@@ -328,6 +333,23 @@ public static class SceneBuilder
         var creditosGO = new GameObject("Creditos");
         var creditos = creditosGO.AddComponent<CreditosUI>();
         creditos.equipe = EquipeDoProjeto;
+
+        // arte que a cutscene de abertura usa (ela é montada em tempo de execução)
+        var recursos = new GameObject("RecursosDaAbertura").AddComponent<RecursosDaAbertura>();
+        recursos.kaidaParada = Quadros("Assets/Art/Player/Kaida/Kaida-Idle.png");
+        recursos.kaidaCorrendo = Quadros("Assets/Art/Player/Kaida/Kaida-Run.png");
+        recursos.javali = Quadros("Assets/Art/Enemies/Boar/Boar-Walk.png");
+        recursos.javaliParado = Quadros("Assets/Art/Enemies/Boar/Boar-Idle.png");
+        recursos.abelha = Quadros("Assets/Art/Enemies/Bee/Bee-Fly.png");
+        recursos.caracol = Quadros("Assets/Art/Enemies/Snail/Snail-Walk.png");
+        recursos.ceu = PrefabBuilder.SpriteSimples("Assets/Art/Environment/Forest/Sky.png");
+        recursos.mata = PrefabBuilder.SpriteSimples("Assets/Art/Environment/Forest/Trees/TreeLine.png");
+        recursos.caverna = PrefabBuilder.SpriteSimples("Assets/Art/Environment/Cavern/CavernBg1.png");
+        recursos.cavernaFundo = PrefabBuilder.SpriteSimples("Assets/Art/Environment/Cavern/CavernBg2.png");
+        recursos.casa = RecorteDeSprites.Carregar(RecorteDeSprites.Casa);
+        recursos.arvore = RecorteDeSprites.Carregar(RecorteDeSprites.ArvoreVerde);
+        recursos.arvoreVermelha = RecorteDeSprites.Carregar(RecorteDeSprites.ArvoreVermelha);
+        recursos.frascoLumen = RecorteDeSprites.Carregar(RecorteDeSprites.FrascoLumen);
 
         var menu = new GameObject("MenuPrincipal");
         var mainMenu = menu.AddComponent<MainMenu>();
@@ -547,7 +569,10 @@ public static class SceneBuilder
         // só bloqueia quem vem de cima; por baixo e pelos lados, passa
         var efeito = go.AddComponent<PlatformEffector2D>();
         efeito.useOneWay = true;
-        efeito.useOneWayGrouping = true;
+        // Sem agrupar: as plataformas da região formam um colisor só, e com
+        // agrupamento um toque por baixo na plataforma de cima (a cabeça da
+        // Kaida) desligava também o pouso na de baixo - ela pulava e caía.
+        efeito.useOneWayGrouping = false;
         efeito.surfaceArc = 150f;
         efeito.useSideFriction = false;
         efeito.useSideBounce = false;
@@ -641,8 +666,10 @@ public static class SceneBuilder
         var arvore = string.IsNullOrEmpty(r.arvore) ? null : RecorteDeSprites.Carregar(r.arvore);
         if (arvore != null && r.densidadeDeArvores > 0)
         {
-            float passo = (float)largura / r.densidadeDeArvores;
-            for (int i = 0; i < r.densidadeDeArvores; i++)
+            // a densidade foi pensada para 64 colunas: mapa mais largo, mais árvores
+            int quantas = Mathf.Max(1, Mathf.RoundToInt(r.densidadeDeArvores * largura / 64f));
+            float passo = (float)largura / quantas;
+            for (int i = 0; i < quantas; i++)
             {
                 float x = passo * i + (float)sorte.NextDouble() * passo * 0.6f;
                 float escala = 0.55f + (float)sorte.NextDouble() * 0.35f;
@@ -673,7 +700,7 @@ public static class SceneBuilder
             // nenhum e ainda escondem o caminho.
             float nivelDoPiso = AlturaDoChao(r, largura, altura, 0);
 
-            int[] colunas = { 5, 25, 44 };
+            int[] colunas = { 5, 25, 44, 62, 76 };
             foreach (int col in colunas)
             {
                 float chao = AlturaDoChao(r, largura, altura, col);
@@ -719,7 +746,7 @@ public static class SceneBuilder
 
             for (int coluna = 2; coluna < largura - 2; coluna += 3)
             {
-                if (sorte.Next(100) > 45) continue;
+                if (sorte.Next(100) > 60) continue;
                 float chao = AlturaDoChao(r, largura, altura, coluna);
                 if (chao < 0f) continue;
 
@@ -740,6 +767,56 @@ public static class SceneBuilder
                 sr.color = Color.Lerp(r.tint, Color.white, 0.1f);
                 if (sorte.Next(2) == 0) sr.flipX = true;
             }
+        }
+
+        MontarDetalhes(r, pai.transform, sorte, largura, altura);
+    }
+
+    /// <summary>
+    /// Detalhes vivos: vaga-lumes (ou esporos de lúmen, nas cavernas) e tochas
+    /// tremulando no chão das regiões escuras e da vila.
+    /// </summary>
+    static void MontarDetalhes(Regiao r, Transform pai, System.Random sorte, int largura, int altura)
+    {
+        bool escuro = r.arquivo.StartsWith("04_") || r.arquivo.StartsWith("05_");
+        Color corDaLuz = escuro ? new Color(0.55f, 0.85f, 1f) : new Color(1f, 0.9f, 0.5f);
+        if (r.arquivo.StartsWith("05_")) corDaLuz = new Color(0.85f, 0.6f, 1f);
+
+        int luzes = largura / 4;
+        for (int i = 0; i < luzes; i++)
+        {
+            float x = (float)sorte.NextDouble() * largura;
+            float chao = AlturaDoChao(r, largura, altura, (int)x);
+            if (chao < 0f) chao = 3f;
+            float y = chao + 1.5f + (float)sorte.NextDouble() * 6f;
+
+            var go = new GameObject("Vagalume");
+            go.transform.SetParent(pai);
+            go.transform.position = new Vector3(x, y, 0f);
+            go.transform.localScale = Vector3.one * (0.5f + (float)sorte.NextDouble() * 0.5f);
+            go.AddComponent<SpriteRenderer>();
+            var v = go.AddComponent<Vagalume>();
+            v.cor = corDaLuz;
+            v.raio = 0.6f + (float)sorte.NextDouble() * 1.2f;
+        }
+
+        var tocha = RecorteDeSprites.Carregar(RecorteDeSprites.Tocha);
+        if (tocha == null || !(escuro || r.temCasas)) return;
+
+        // só no piso principal, de 12 em 12 colunas
+        float piso = AlturaDoChao(r, largura, altura, 2);
+        for (int col = 8; col < largura - 4; col += 12)
+        {
+            float chao = AlturaDoChao(r, largura, altura, col);
+            if (chao < 0f || Mathf.Abs(chao - piso) > 0.1f) continue;
+
+            var go = new GameObject("Tocha");
+            go.transform.SetParent(pai);
+            go.transform.position = new Vector3(col + 0.5f, chao, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = tocha;
+            sr.sortingOrder = -4;
+            go.AddComponent<Cintilar>();
         }
     }
 
@@ -986,6 +1063,7 @@ public static class SceneBuilder
         health.player = jogador.GetComponent<PlayerController>();
         // frasco vermelho como pip: um quadrado colorido não diz nada
         health.fullIcon = RecorteDeSprites.Carregar(RecorteDeSprites.FrascoVida);
+        hud.AddComponent<ContadorDeMoedas>();
 
         // cada região tem sua pausa e sua tela de morte
         var pausa = new GameObject("MenuDePausa");
@@ -1055,6 +1133,7 @@ public static class SceneBuilder
                     case 'N': CriarNodulo(r, conteudo, pos); break;
                     case 'X': CriarPerigo(conteudo, pos); break;
                     case 'L': CriarLajeSolta(conteudo, pos); break;
+                    case 'o': CriarMoeda(r, conteudo, pos); break;
 
                     case '>': CriarTransicao(conteudo, pos, r.proxima, "voltando"); break;
                     case '<': CriarTransicao(conteudo, pos, r.anterior, "chegando"); break;
@@ -1064,12 +1143,38 @@ public static class SceneBuilder
             }
         }
 
-        // ponto de chegada de quem volta da região seguinte
-        if (AcharCaractere(r.mapa, 'p', largura, altura) == Vector2.zero)
-        {
-            var saida = AcharCaractere(r.mapa, '>', largura, altura);
-            if (saida != Vector2.zero) CriarSpawn(conteudo, "chegando", saida + Vector2.left * 2f);
-        }
+        // Paredes invisíveis nas bordas e um piso de segurança lá embaixo:
+        // nada sai do mapa, e quem cai no vazio volta ao último marco.
+        CriarBorda(conteudo, "BordaEsquerda", new Vector2(-0.5f, altura * 0.5f), new Vector2(1f, altura * 4f));
+        CriarBorda(conteudo, "BordaDireita", new Vector2(largura + 0.5f, altura * 0.5f), new Vector2(1f, altura * 4f));
+        var abismo = new GameObject("Abismo");
+        abismo.transform.SetParent(conteudo.transform);
+        abismo.transform.position = new Vector2(largura * 0.5f, -6f);
+        var colAbismo = abismo.AddComponent<BoxCollider2D>();
+        colAbismo.isTrigger = true;
+        colAbismo.size = new Vector2(largura + 40f, 4f);
+        var h = abismo.AddComponent<Hazard>();
+        h.damage = 1;
+        h.returnToCheckpoint = true;
+        h.repeatInterval = 1f;
+
+        // Ponto de chegada de quem volta da região seguinte, ao lado da saída.
+        // Antes só nascia em região sem 'p', então voltar do Lago para a
+        // Floresta (por exemplo) não achava onde pousar.
+        var saida = AcharCaractere(r.mapa, '>', largura, altura);
+        if (saida != Vector2.zero) CriarSpawn(conteudo, "chegando", saida + Vector2.left * 2f);
+    }
+
+    static void CriarBorda(GameObject pai, string nome, Vector2 centro, Vector2 tamanho)
+    {
+        var go = new GameObject(nome);
+        go.transform.SetParent(pai.transform);
+        go.transform.position = centro;
+        // Na layer de chão: é por ela que os inimigos enxergam parede e dão
+        // meia-volta. Em outra layer eles empurravam a borda para sempre e
+        // ficavam parados no fim do mapa.
+        go.layer = PrefabBuilder.LayerGround;
+        go.AddComponent<BoxCollider2D>().size = tamanho;
     }
 
     static void CriarSpawn(GameObject pai, string id, Vector2 pos)
@@ -1100,8 +1205,37 @@ public static class SceneBuilder
         if (go == null) return;
 
         var p = go.GetComponent<PickupAbility>();
-        p.abilityId = "double_jump";
-        p.mensagem = "Pulo Duplo\nO ar segura você por um instante a mais.";
+        var (id, titulo, descricao, tecla) = HabilidadeDaRegiao(r.arquivo);
+        p.abilityId = id;
+        p.titulo = titulo;
+        p.descricao = descricao;
+        p.tecla = tecla;
+        p.mensagem = titulo + "\n" + descricao;
+    }
+
+    /// <summary>Uma habilidade por região, na ordem da progressão.</summary>
+    static (string, string, string, string) HabilidadeDaRegiao(string regiao)
+    {
+        if (regiao.StartsWith("01_"))
+            return ("dash", "Impulso", "Um avanço rápido que atravessa o perigo sem ser tocado.", "SHIFT ou K");
+        if (regiao.StartsWith("02_"))
+            return ("double_jump", "Pulo Duplo", "O ar segura você por um instante a mais.", "ESPAÇO no ar");
+        if (regiao.StartsWith("03_"))
+            return ("air_dash", "Impulso Aéreo", "O Impulso agora também funciona no meio do salto.", "SHIFT ou K no ar");
+        if (regiao.StartsWith("04_"))
+            return ("triple_jump", "Salto do Musgo", "Um terceiro pulo no ar, para subir onde ninguém sobe.", "ESPAÇO no ar (x2)");
+        return ("lumen_blade", "Lâmina de Lúmen", "A espada lembra o que cortava: cada golpe tira o dobro.", "");
+    }
+
+    static int contadorMoeda = 0;
+    static void CriarMoeda(Regiao r, GameObject pai, Vector2 pos)
+    {
+        var go = new GameObject("Moeda");
+        go.transform.SetParent(pai.transform);
+        // centro do tile, um pouco acima de onde se pisa
+        go.transform.position = pos + new Vector2(0.5f, 0.6f);
+        go.AddComponent<SpriteRenderer>();
+        go.AddComponent<Moeda>().moedaId = $"moeda_{r.arquivo}_{contadorMoeda++}";
     }
 
     static int contadorFragmento = 0;
@@ -1154,6 +1288,7 @@ public static class SceneBuilder
         laje.direcao = 1;
         laje.velocidade = 2f;
         laje.duracao = 5f;
+        laje.voltarAoLugar = true;   // não fica no chão travando os javalis
     }
 
     static void CriarPerigo(GameObject pai, Vector2 pos)
@@ -1178,11 +1313,16 @@ public static class SceneBuilder
 
         var go = new GameObject($"Passagem_para_{destino}");
         go.transform.SetParent(pai.transform);
+        // A faixa cobre a altura inteira do mapa: com plataformas perto da
+        // saída, dava para pular POR CIMA de uma passagem baixa, cair do outro
+        // lado e sair do mapa.
+        // (a posição continua na altura do chão; só o colisor cresce)
         go.transform.position = pos + Vector2.up * 1.5f;
 
         var col = go.AddComponent<BoxCollider2D>();
         col.isTrigger = true;
-        col.size = new Vector2(1.2f, 6f);
+        col.size = new Vector2(1.2f, 60f);
+        col.offset = new Vector2(0f, 20f);
 
         var t = go.AddComponent<RoomTransition>();
         t.targetScene = destino;
@@ -1196,6 +1336,18 @@ public static class SceneBuilder
 
         var boss = go.GetComponent<GuardianBoss>();
         if (jogador != null) boss.player = jogador.transform;
+    }
+
+    /// <summary>Quadros de uma folha fatiada, na ordem certa (Folha_2 antes de Folha_10).</summary>
+    static Sprite[] Quadros(string caminho)
+    {
+        return AssetDatabase.LoadAllAssetsAtPath(caminho).OfType<Sprite>()
+            .OrderBy(sp =>
+            {
+                int corte = sp.name.LastIndexOf('_');
+                return corte >= 0 && int.TryParse(sp.name.Substring(corte + 1), out int n) ? n : 0;
+            })
+            .ToArray();
     }
 
     static Vector2 AcharCaractere(string[] mapa, char alvo, int largura, int altura)
