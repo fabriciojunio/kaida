@@ -247,6 +247,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         float dir = Mathf.Sign(transform.position.x - sourcePos.x);
         if (dir == 0f) dir = -facing;
         rb.velocity = new Vector2(dir * 3f, 2f);
+        EfeitosSonoros.Tocar(health <= 0 ? Som.MorteInimigo : Som.AcertoInimigo);
         if (health <= 0) Die();
         else StartCoroutine(FlashRoutine());
     }

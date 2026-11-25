@@ -31,6 +31,13 @@ public class PlataformaSolta : MonoBehaviour
     [Tooltip("Multiplicador da gravidade depois que o tempo acaba.")]
     public float gravidadeDaQueda = 2.5f;
 
+    [Header("Depois da queda")]
+    [Tooltip("Some e volta ao lugar de origem depois de cair. Sem isso ela fica no chão " +
+             "para sempre e vira um obstáculo que trava os inimigos.")]
+    public bool voltarAoLugar = false;
+    [Tooltip("Segundos parada no chão antes de sumir e voltar.")]
+    public float esperaParaVoltar = 2.5f;
+
     /// <summary>Em que ponto do ciclo ela está. Parada, Andando ou Caindo.</summary>
     public Fase Estado { get; private set; } = Fase.Parada;
 
@@ -40,6 +47,10 @@ public class PlataformaSolta : MonoBehaviour
     Rigidbody2D rb;
     BoxCollider2D caixa;
     PlayerController passageiro;
+    Vector3 origem;
+    float tempoCaindo;
+    bool assentada;
+    bool voltando;
 
     void Awake()
     {
@@ -52,6 +63,7 @@ public class PlataformaSolta : MonoBehaviour
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
         rb.velocity = Vector2.zero;
+        origem = transform.position;
     }
 
     void OnCollisionEnter2D(Collision2D contato)
@@ -85,6 +97,7 @@ public class PlataformaSolta : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (Estado == Fase.Caindo) { DepoisDaQueda(); return; }
         if (Estado != Fase.Andando) return;
 
         // Carrega quem está em cima pelo mesmo tanto que ela anda no passo.
@@ -111,7 +124,68 @@ public class PlataformaSolta : MonoBehaviour
         rb.velocity = Vector2.zero;               // para de vez na horizontal
         rb.bodyType = RigidbodyType2D.Dynamic;    // e a partir daqui tem peso
         rb.gravityScale = gravidadeDaQueda;
+        // trava o X: caindo, ela não pode ser empurrada de lado por quem encosta
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
+        tempoCaindo = 0f;
+        assentada = false;
+    }
+
+    /// <summary>
+    /// Depois de pousar, a laje vira cinemática: um corpo dinâmico parado no
+    /// chão era empurrado pela Kaida e pelos inimigos, e acabava prendendo os
+    /// javalis contra ela. Se configurada, some e volta ao lugar de origem.
+    /// </summary>
+    void DepoisDaQueda()
+    {
+        tempoCaindo += Time.fixedDeltaTime;
+
+        if (!assentada && tempoCaindo > 0.25f && Mathf.Abs(rb.velocity.y) < 0.05f)
+        {
+            assentada = true;
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.velocity = Vector2.zero;
+            tempoCaindo = 0f;
+        }
+
+        if (!voltarAoLugar || voltando) return;
+
+        // pousada há um tempo, ou caiu no vazio / na água e nunca pousou
+        bool hora = assentada ? tempoCaindo >= esperaParaVoltar : tempoCaindo >= 6f;
+        if (hora) StartCoroutine(VoltarAoLugar());
+    }
+
+    System.Collections.IEnumerator VoltarAoLugar()
+    {
+        voltando = true;
+        var sprites = GetComponentsInChildren<SpriteRenderer>();
+
+        for (float t = 0f; t < 0.5f; t += Time.deltaTime)
+        {
+            foreach (var sr in sprites) { var c = sr.color; c.a = 1f - t / 0.5f; sr.color = c; }
+            yield return null;
+        }
+
+        caixa.enabled = false;
+        rb.bodyType = RigidbodyType2D.Kinematic;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb.gravityScale = 0f;
+        rb.velocity = Vector2.zero;
+        rb.position = origem;
+        transform.position = origem;
+        passageiro = null;
+        Estado = Fase.Parada;
+        TempoAndando = 0f;
+        assentada = false;
+        yield return new WaitForSeconds(0.2f);
+        caixa.enabled = true;
+
+        for (float t = 0f; t < 0.5f; t += Time.deltaTime)
+        {
+            foreach (var sr in sprites) { var c = sr.color; c.a = t / 0.5f; sr.color = c; }
+            yield return null;
+        }
+        foreach (var sr in sprites) { var c = sr.color; c.a = 1f; sr.color = c; }
+        voltando = false;
     }
 
     /// <summary>Marca quem está pisando em cima. Quem encosta de lado ou por

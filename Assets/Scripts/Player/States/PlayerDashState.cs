@@ -10,6 +10,7 @@ public class PlayerDashState : State
     public override void Enter()
     {
         timer = p.stats.dashTime;
+        EfeitosSonoros.Tocar(Som.Dash);
         p.canDash = false;
         p.dashCooldownTimer = p.stats.dashCooldown;
         p.isInvulnerable = true;

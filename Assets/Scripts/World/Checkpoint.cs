@@ -27,6 +27,7 @@ public class Checkpoint : MonoBehaviour
         if (other.GetComponent<PlayerController>() == null) return;
 
         ativado = true;
+        EfeitosSonoros.Tocar(Som.Checkpoint);
         if (sr != null) sr.color = corAtiva;
 
         if (GameManager.Instance != null)

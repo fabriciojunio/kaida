@@ -10,6 +10,7 @@ public class PlayerJumpState : State
     {
         // pulo aéreo (double_jump) sai um pouco mais fraco que o pulo do chão
         float power = p.pendingAirJump ? p.stats.airJumpPower : 1f;
+        EfeitosSonoros.Tocar(p.pendingAirJump ? Som.PuloAereo : Som.Pulo);
         p.pendingAirJump = false;
         p.SetVelocityY(p.stats.JumpVelocity * power);
         p.coyoteTimer = 0f;
@@ -24,18 +25,18 @@ public class PlayerJumpState : State
 
     public override void LogicUpdate()
     {
-        if (Input.GetButtonUp("Jump") && p.rb.velocity.y > 0)
+        if (Controles.PularSoltou && p.rb.velocity.y > 0)
             p.SetVelocityY(p.rb.velocity.y * p.stats.jumpCutMultiplier);
 
         // segundo pulo no ar, sem sair do estado (só reaplica a força)
-        if (Input.GetButtonDown("Jump") && p.CanAirJump())
+        if (Controles.PularApertou && p.CanAirJump())
         {
             p.ConsumeAirJump();
             Enter();
             return;
         }
         if (p.rb.velocity.y <= 0) { machine.ChangeState("fall"); return; }
-        if (Input.GetKeyDown(KeyCode.LeftShift) && p.canDash && p.airDashesLeft > 0) { machine.ChangeState("dash"); return; }
-        if (Input.GetButtonDown("Fire1")) { machine.ChangeState("attack"); return; }
+        if (Controles.ImpulsoApertou && p.CanDashInput && p.airDashesLeft > 0) { machine.ChangeState("dash"); return; }
+        if (Controles.AtacarApertou) { machine.ChangeState("attack"); return; }
     }
 }

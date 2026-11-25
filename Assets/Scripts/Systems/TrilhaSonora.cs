@@ -24,6 +24,7 @@ public class TrilhaSonora : MonoBehaviour
     public int compassos = 8;
 
     const int TaxaDeAmostragem = 44100;
+    const float GanhoBase = 5f;   // abaixo dos efeitos: a trilha é fundo
 
     AudioSource fonte;
 
@@ -55,7 +56,10 @@ public class TrilhaSonora : MonoBehaviour
     public void AplicarVolumeGeral()
     {
         if (fonte == null) return;
-        fonte.volume = volume * GameSettings.Volume;
+        // Os volumes de região (0.05–0.09) foram pensados como "fundo", mas
+        // ficavam em ~-25 dB: em caixa de notebook, com notas graves quase
+        // senoidais, simplesmente não se ouvia nada.
+        fonte.volume = Mathf.Clamp01(volume * GanhoBase * GameSettings.Volume);
     }
 
     public void Reconfigurar(float novaTonica, float novaDuracao, int novosCompassos, float novoVolume)
@@ -122,6 +126,24 @@ public class TrilhaSonora : MonoBehaviour
             Somar(dados, n * amostrasPorNota, amostrasPorNota, freq, ganho, 0.12f, ondaQuadrada: true);
         }
 
+        // --- acorde de fundo (pad): tríade menor sustentada em cada compasso ---
+        // preenche o espaço entre as notas do arpejo, sem chamar atenção
+        int[] triade = { 0, 3, 7 };
+        for (int c = 0; c < compassos; c++)
+        {
+            int grau = escalaMenor[grausDoBaixo[c % grausDoBaixo.Length]];
+            foreach (int intervalo in triade)
+            {
+                float freq = tonica * Mathf.Pow(2f, (grau + intervalo) / 12f);
+                Somar(dados, c * amostrasPorCompasso, amostrasPorCompasso, freq, 0.05f, 0.45f, ondaQuadrada: false);
+            }
+        }
+
+        // --- eco leve: o arpejo "ressoa" no vale ---
+        int atraso = Mathf.RoundToInt(amostrasPorNota * 0.75f);
+        for (int i = atraso; i < total; i++)
+            dados[i] += dados[i - atraso] * 0.28f;
+
         Normalizar(dados);
 
         var clip = AudioClip.Create("TrilhaKaida", total, 1, TaxaDeAmostragem, false);
@@ -150,8 +172,10 @@ public class TrilhaSonora : MonoBehaviour
             // som ambiente não pode ter borda áspera: o que chama atenção
             // numa trilha de fundo é justamente o brilho dos agudos.
             float onda = ondaQuadrada
-                ? Mathf.Sin(fase) + 0.08f * Mathf.Sin(fase * 2f) + 0.03f * Mathf.Sin(fase * 3f)
-                : Mathf.Sin(fase) + 0.12f * Mathf.Sin(fase * 0.5f);
+                ? Mathf.Sin(fase) + 0.18f * Mathf.Sin(fase * 2f) + 0.06f * Mathf.Sin(fase * 3f)
+                // o baixo (70–130 Hz) some em alto-falante pequeno; o 2º e 3º
+                // harmônicos deixam ele perceptível sem ficar áspero
+                : Mathf.Sin(fase) + 0.35f * Mathf.Sin(fase * 2f) + 0.12f * Mathf.Sin(fase * 3f);
 
             // Envelope em curva, não em rampa reta: a entrada e a saída de
             // cada nota ficam macias, sem o "clique" que uma rampa linear
@@ -179,7 +203,7 @@ public class TrilhaSonora : MonoBehaviour
         foreach (var v in dados) pico = Mathf.Max(pico, Mathf.Abs(v));
         if (pico < 0.0001f) return;
 
-        float fator = 0.85f / pico;
+        float fator = 0.95f / pico;
         for (int i = 0; i < dados.Length; i++) dados[i] *= fator;
     }
 }

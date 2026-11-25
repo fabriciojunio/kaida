@@ -14,6 +14,12 @@ public class PickupAbility : MonoBehaviour
     [Tooltip("Texto mostrado ao pegar.")]
     [TextArea] public string mensagem = "Pulo Duplo\nO ar segura você por um instante a mais.";
 
+    [Header("Anúncio")]
+    public string titulo = "Pulo Duplo";
+    public string descricao = "O ar segura você por um instante a mais.";
+    [Tooltip("Tecla mostrada no anúncio. Vazio = nenhuma.")]
+    public string tecla = "ESPAÇO no ar";
+
     public float bobHeight = 0.15f;
     public float bobSpeed = 2f;
 
@@ -44,7 +50,7 @@ public class PickupAbility : MonoBehaviour
 
         if (SaveSystem.Instance != null) SaveSystem.Instance.UnlockAbility(abilityId);
         p.RefreshAirAbilities();   // libera o pulo duplo na hora, sem precisar tocar o chão
-        MessageUI.Show(mensagem);
+        HabilidadeDesbloqueadaUI.Mostrar(p, titulo, descricao, tecla);
         gameObject.SetActive(false);
     }
 }

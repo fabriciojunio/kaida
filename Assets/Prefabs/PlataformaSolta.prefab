@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 3299840207011770553, guid: 30d3cb002d04a2a4fa3c0a971b42bc9e, type: 2}
+  m_Sprite: {fileID: -7085620219592552332, guid: 30d3cb002d04a2a4fa3c0a971b42bc9e, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -175,3 +175,5 @@ MonoBehaviour:
   velocidade: 2
   duracao: 5
   gravidadeDaQueda: 2.5
+  voltarAoLugar: 0
+  esperaParaVoltar: 2.5

@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 6
-  m_Sprite: {fileID: 7797418825467729893, guid: 953fd1f95edeb9f42a8258e7a8c5e1b0, type: 2}
+  m_Sprite: {fileID: -5465764562593439325, guid: 953fd1f95edeb9f42a8258e7a8c5e1b0, type: 2}
   m_Color: {r: 1, g: 0.95, b: 0.7, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -135,5 +135,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityId: double_jump
   mensagem: "Pulo Duplo\nO ar segura voc\xEA por um instante a mais."
+  titulo: Pulo Duplo
+  descricao: "O ar segura voc\xEA por um instante a mais."
+  tecla: "ESPA\xC7O no ar"
   bobHeight: 0.15
   bobSpeed: 2
