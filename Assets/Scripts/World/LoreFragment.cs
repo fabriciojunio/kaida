@@ -39,6 +39,7 @@ public class LoreFragment : MonoBehaviour
             SaveSystem.Instance.MarkCollected(fragmentId);
             SaveSystem.Instance.SaveGame();
         }
+        EfeitosSonoros.Tocar(Som.Coleta);
         MessageUI.Show(texto, 5.5f);
         gameObject.SetActive(false);
     }

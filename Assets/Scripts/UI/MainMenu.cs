@@ -53,7 +53,10 @@ public class MainMenu : MonoBehaviour
 
         if (GameManager.Instance != null) GameManager.Instance.ReiniciarVidas();
 
-        SceneManager.LoadScene("01_OrlaDaVila");
+        // antes da primeira região, a abertura apresenta o projeto e a ideia
+        // do jogo; ao acabar (ou ao pular com ESC) a Orla carrega
+        gameObject.SetActive(false);
+        CutsceneDeAbertura.Iniciar(() => SceneManager.LoadScene("01_OrlaDaVila"));
     }
 
     void Continuar()
@@ -277,12 +280,13 @@ public class MainMenu : MonoBehaviour
 
         UIKit.Paragrafo(t,
             "Andar          setas  ou  A / D\n" +
-            "Pular          espaço\n" +
-            "Atacar         Ctrl esquerdo  ou  clique\n" +
-            "Dash           Shift esquerdo\n" +
+            "Pular          espaço, W  ou  seta para cima\n" +
+            "Atacar         ENTER, J  ou  clique\n" +
+            "Descer         S  ou  seta para baixo\n" +
+            "Impulso        Shift  ou  K\n" +
             "Pausar         Esc\n\n" +
-            "Pulo duplo e escalada de parede aparecem\n" +
-            "quando você encontrar cada habilidade no vale.",
+            "Cada região guarda uma habilidade nova:\n" +
+            "encontre-a para seguir mais longe no vale.",
             new Vector2(ColunaX, 74f), new Vector2(320f, 170f), 13);
 
         var voltar = UIKit.Coluna(t, new Vector2(ColunaX, -118f), 180f, 8f);

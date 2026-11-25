@@ -23,8 +23,8 @@ public class PlayerIdleState : State
     {
         if (!p.IsGrounded()) { p.coyoteTimer = p.stats.coyoteTime; machine.ChangeState("fall"); return; }
         if (Mathf.Abs(p.InputX) > 0.01f) { machine.ChangeState("run"); return; }
-        if (Input.GetButtonDown("Jump")) { machine.ChangeState("jump"); return; }
-        if (Input.GetButtonDown("Fire1")) { machine.ChangeState("attack"); return; }
-        if (Input.GetKeyDown(KeyCode.LeftShift) && p.canDash) { machine.ChangeState("dash"); return; }
+        if (Controles.PularApertou) { machine.ChangeState("jump"); return; }
+        if (Controles.AtacarApertou) { machine.ChangeState("attack"); return; }
+        if (Controles.ImpulsoApertou && p.CanDashInput) { machine.ChangeState("dash"); return; }
     }
 }

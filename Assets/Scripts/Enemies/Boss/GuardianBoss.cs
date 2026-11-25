@@ -80,6 +80,7 @@ public class GuardianBoss : MonoBehaviour, IDamageable
 
         Health = Mathf.Max(0, Health - amount);
         HealthChanged?.Invoke(Health, maxHealth);
+        EfeitosSonoros.Tocar(Health <= 0 ? Som.Morte : Som.DanoChefe);
         StartCoroutine(FlashRoutine());
 
         if (Health <= 0) Machine.ChangeState("morto");

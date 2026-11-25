@@ -57,21 +57,31 @@ O jogo assume a resolução do monitor onde for aberto, de 4:3 a ultrawide.
 | Ação | Tecla |
 |------|-------|
 | Andar | setas ou A / D |
-| Pular | espaço |
-| Atacar | Ctrl esquerdo ou botão esquerdo do mouse |
-| Dash | Shift esquerdo |
+| Pular | espaço, W ou seta para cima |
+| Atacar | Enter, J ou botão esquerdo do mouse |
+| Impulso (dash) | Shift ou K |
+| Descer da plataforma | S ou seta para baixo |
 | Pausar | Esc |
 
-O pulo duplo só funciona depois de encontrar a habilidade no mapa.
+Cada região guarda uma habilidade: ela só funciona depois de encontrada.
 
 ## O jogo
 
-Cinco regiões conectadas, percorridas nos dois sentidos:
+Uma abertura curta conta a história: o lúmen guardava as lembranças do vale,
+a luz se apagou e o povo esqueceu quem era. Kaida acorda sem memória e precisa
+recuperá-la.
+
+Cinco regiões conectadas, percorridas nos dois sentidos, cada uma com uma
+habilidade nova:
 
 ```
 Orla da Vila → Floresta Silente → Lago Silente → Caverna Musgosa → Santuário
  (tutorial)      (pulo duplo)      (travessia)     (verticalidade)     (chefe)
+  Impulso         Pulo Duplo      Impulso Aéreo    Salto do Musgo   Lâmina de Lúmen
 ```
+
+Pegar uma habilidade tem anúncio próprio: o tempo desacelera, a tela brilha e
+o nome aparece grande, com a tecla que a usa.
 
 - **3 tipos de inimigo**, cada um com padrão próprio: o javali telegrafa e
   investe, a abelha mergulha em diagonal, o caracol se fecha na casca e
@@ -82,7 +92,10 @@ Orla da Vila → Floresta Silente → Lago Silente → Caverna Musgosa → Santu
 - **Laje solta** na Orla da Vila: fica parada no ar até alguém pisar nela,
   desliza cinco segundos levando junto quem estiver em cima e depois trava e
   cai. Pisar de novo enquanto ela desce não adianta nada
-- **Colecionáveis**: fragmentos de lore e nódulos que aumentam a vida máxima
+- **Colecionáveis**: moedas espalhadas pelos caminhos, fragmentos de lore e
+  nódulos que aumentam a vida máxima
+- **Som gerado por código**: trilha por região e efeitos de pulo, ataque,
+  dano, moedas e habilidades, todos sintetizados em tempo de execução
 - **Três tentativas por partida**: esgotadas, o jogo recomeça do início
 - **Save automático** nos marcos de descanso
 

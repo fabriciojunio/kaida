@@ -23,6 +23,7 @@ public class HealthNode : MonoBehaviour
         var p = other.GetComponent<PlayerController>();
         if (p == null) return;
 
+        EfeitosSonoros.Tocar(Som.Coleta);
         p.stats.maxHealth += 1;
         p.Heal(1);
         p.NotifyHealthChanged();

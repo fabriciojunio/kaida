@@ -97,9 +97,23 @@ public class PlayerController : MonoBehaviour
         return SaveSystem.Instance.HasAbility(id);
     }
 
+    /// <summary>
+    /// Habilidade que só vale se foi pega de verdade no save. Usada pelas
+    /// habilidades novas (salto do musgo, lâmina de lúmen): numa cena de teste
+    /// isolada elas ficam desligadas, para não mudar o que os testes medem.
+    /// </summary>
+    public bool HasSavedAbility(string id)
+        => SaveSystem.Instance != null && SaveSystem.Instance.HasAbility(id);
+
+    /// <summary>Dash pelo teclado só depois de pegar o Impulso na Orla.</summary>
+    public bool CanDashInput => canDash && (HasSavedAbility("dash") || HasSavedAbility("air_dash"));
+    // (o Impulso Aéreo inclui o Impulso: quem pulou a Orla sem pegar o
+    // primeiro não pode ficar com uma habilidade que não funciona)
+
     void Update()
     {
         TickTimers(Time.deltaTime);
+        if (Controles.DescerApertou) TentarDescerDaPlataforma();
         Machine.LogicUpdate();
     }
 
@@ -114,6 +128,30 @@ public class PlayerController : MonoBehaviour
         jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - dt);
         dashCooldownTimer = Mathf.Max(0f, dashCooldownTimer - dt);
         if (dashCooldownTimer == 0f) canDash = true;
+    }
+
+    /// <summary>
+    /// S / seta para baixo em cima de uma plataforma atravessável: ignora a
+    /// colisão com ela por um instante e a Kaida cai para o andar de baixo.
+    /// No chão sólido não faz nada.
+    /// </summary>
+    void TentarDescerDaPlataforma()
+    {
+        if (groundCheck == null || descendo != null) return;
+        var sob = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        if (sob == null || sob.GetComponent<PlatformEffector2D>() == null) return;
+        descendo = StartCoroutine(Descer(sob));
+    }
+
+    Coroutine descendo;
+    System.Collections.IEnumerator Descer(Collider2D plataforma)
+    {
+        var meus = GetComponentsInChildren<Collider2D>();
+        foreach (var c in meus) Physics2D.IgnoreCollision(c, plataforma, true);
+        rb.velocity = new Vector2(rb.velocity.x, -3f);
+        yield return new WaitForSeconds(0.35f);
+        foreach (var c in meus) if (c != null && plataforma != null) Physics2D.IgnoreCollision(c, plataforma, false);
+        descendo = null;
     }
 
     // ---------- utilidades usadas pelos estados ----------
@@ -205,11 +243,15 @@ public class PlayerController : MonoBehaviour
     public bool CanCoyoteJump() => coyoteTimer > 0f;
     public void RefreshAirAbilities()
     {
-        airDashesLeft = stats.airDashes;
+        airDashesLeft = HasAbility("air_dash") ? stats.airDashes : 0;
         airJumpsLeft = HasAbility("double_jump") ? stats.airJumps : 0;
+        if (airJumpsLeft > 0 && HasSavedAbility("triple_jump")) airJumpsLeft++;
     }
 
     // ---------- combate ----------
+    /// <summary>A Lâmina de Lúmen (Santuário) soma 1 ao golpe.</summary>
+    public int DanoDoGolpe => stats.attackDamage + (HasSavedAbility("lumen_blade") ? 1 : 0);
+
     public void DoAttackHit()
     {
         if (attackPoint == null) return;
@@ -225,7 +267,7 @@ public class PlayerController : MonoBehaviour
             var alvo = h.GetComponentInParent<IDamageable>();
             if (alvo == null || atingidos.Contains(alvo)) continue;
             atingidos.Add(alvo);
-            alvo.TakeDamage(stats.attackDamage, transform.position);
+            alvo.TakeDamage(DanoDoGolpe, transform.position);
         }
     }
 
@@ -236,6 +278,7 @@ public class PlayerController : MonoBehaviour
         HealthChanged?.Invoke(health, stats.maxHealth);
         if (health <= 0)
         {
+            EfeitosSonoros.Tocar(Som.Morte);
             Died?.Invoke();
             Machine.ChangeState("dead");
         }
@@ -244,6 +287,7 @@ public class PlayerController : MonoBehaviour
             int dir = (int)Mathf.Sign(transform.position.x - sourcePos.x);
             if (dir == 0) dir = -facing;
             pendingKnockbackDir = dir;
+            EfeitosSonoros.Tocar(Som.Dano);
             Machine.ChangeState("hurt");
         }
     }

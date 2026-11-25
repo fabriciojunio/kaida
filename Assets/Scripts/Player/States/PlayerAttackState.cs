@@ -16,6 +16,7 @@ public class PlayerAttackState : State
         timer = duration;
         hitApplied = false;
         p.PlayAnim("attack");
+        EfeitosSonoros.Tocar(Som.Ataque);
     }
 
     public override void PhysicsUpdate()

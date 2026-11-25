@@ -13,6 +13,7 @@ public class SaveData
     public string room = "";
     public List<string> unlockedAbilities = new List<string>();
     public List<string> collectedItems = new List<string>();
+    public int moedas;
 }
 
 public class SaveSystem : MonoBehaviour
